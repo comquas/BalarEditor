@@ -5,6 +5,7 @@ Markdown Editor for [Balar](https://github.com/saturngod/Balar) . Open Balar ind
 - Node.js
 - Ace Editor
 - Electorn
+- marked.js and highlight.js for preview
 
 ## Run
 
