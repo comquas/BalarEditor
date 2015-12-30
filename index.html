@@ -1,281 +1,306 @@
 <html>
-<head>
-    <title>Balar App</title>
-    <script src="./js/ace/ace.js"></script>
-     <script src="./js/ace/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
-     <script src="./js/ace/theme-chrome.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./js/marked.min.js"></script>
-    <script src="./js/highlight/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
-    <link rel="stylesheet" href="./js/highlight/styles/default.css" type="text/css">
-    <style>
-    body {
-        margin:0px;
-        padding:0px;
-    }
-    #editor {
-        position: fixed;
-        left:0px;
-        width: 50%;
-        height: 100%;
-    }
-    #preview {
-        position:fixed;
-        right:0px;
-        padding-left:5px;
-        width:49%;
-        font-size: 13pt;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        height: 100%;
-        overflow:scroll;
-    }
-    
-    </style>
-    
-</head>
-<body>
-    <!-- start electron -->
-    <script>
-    var editor;
-
-    var remote = require('remote');
-    var Menu = remote.require('menu');
-    var MenuItem = remote.require('menu-item');
-
-    var dialog = remote.require('dialog');
-    var path = remote.require('path');
-    var handler = remote.require(path.resolve(__dirname,"./modules/balarHandler.js"));
-
-    var current_openfile = "";
-
-    function openfile() {
-        dialog.showOpenDialog({ properties: [ 'openFile'],filters: [{ name: 'Balar', extensions: ['html'] }]},function (fileNames) {
-                 if(fileNames !== undefined) {
-
-                     current_openfile = fileNames[0];
-                     console.log(current_openfile);
-                     var data = handler.loadFile(current_openfile);
-                     editor.setValue(data);
-                 }
-             });
-    }
-
-    function savefile() {
-        if (current_openfile == "") {
-            alert('please open the file first');
-            return;
-        }
-
-        handler.savefile(current_openfile,editor.getValue());
-    }
-    var template = [
-      {
-          label: 'File',
-          submenu: [
-              {
-                  label: 'Open',
-                  accelerator: 'CmdOrCtrl+O',
-                  click: function() {
-                      openfile();
-                  }
-              },
-              {
-                  label: 'Save',
-                  accelerator: 'CmdOrCtrl+S',
-                  click: function() {
-                      savefile();
-                  }
-              }
-          ]
-      },
-      {
-        label: 'Edit',
-        submenu: [
-          {
-            label: 'Undo',
-            accelerator: 'CmdOrCtrl+Z',
-            role: 'undo'
-          },
-          {
-            label: 'Redo',
-            accelerator: 'Shift+CmdOrCtrl+Z',
-            role: 'redo'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Cut',
-            accelerator: 'CmdOrCtrl+X',
-            role: 'cut'
-          },
-          {
-            label: 'Copy',
-            accelerator: 'CmdOrCtrl+C',
-            role: 'copy'
-          },
-          {
-            label: 'Paste',
-            accelerator: 'CmdOrCtrl+V',
-            role: 'paste'
-          },
-          {
-            label: 'Select All',
-            accelerator: 'CmdOrCtrl+A',
-            role: 'selectall'
-          },
-        ]
-      },
-      {
-        label: 'View',
-        submenu: [
-          {
-            label: 'Reload',
-            accelerator: 'CmdOrCtrl+R',
-            click: function(item, focusedWindow) {
-              if (focusedWindow)
-                focusedWindow.reload();
+    <head>
+        <title>Balar App</title>
+        <script src="./js/ace/ace.js"></script>
+        <script src="./js/ace/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./js/ace/theme-chrome.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./js/marked.js"></script>
+        <script src="./js/highlight/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+        <link rel="stylesheet" href="./js/highlight/styles/default.css" type="text/css">
+            <style>
+                body {
+                    margin:0px;
+                    padding:0px;
+                }
+            #editor {
+                position: fixed;
+                left:0px;
+                width: 50%;
+                height: 100%;
             }
-          },
-          {
-            label: 'Toggle Full Screen',
-            accelerator: (function() {
-              if (process.platform == 'darwin')
-                return 'Ctrl+Command+F';
-              else
-                return 'F11';
-            })(),
-            click: function(item, focusedWindow) {
-              if (focusedWindow)
-                focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+            #preview {
+                position:fixed;
+                right:0px;
+                padding-left:5px;
+                width:49%;
+                font-size: 13pt;
+                font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+                height: 100%;
+                overflow:scroll;
             }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: (function() {
-              if (process.platform == 'darwin')
-                return 'Alt+Command+I';
-              else
-                return 'Ctrl+Shift+I';
-            })(),
-            click: function(item, focusedWindow) {
-              if (focusedWindow)
-                focusedWindow.toggleDevTools();
+            
+                </style>
+            
+    </head>
+    <body>
+        <!-- start electron -->
+        <script>
+            var editor;
+            
+            var remote = require('remote');
+            var Menu = remote.require('menu');
+            var MenuItem = remote.require('menu-item');
+            
+            var dialog = remote.require('dialog');
+            var path = remote.require('path');
+            var handler = remote.require(path.resolve(__dirname,"./modules/balarHandler.js"));
+            
+            var current_openfile = "";
+            
+            function openfile() {
+                dialog.showOpenDialog({ properties: [ 'openFile'],filters: [{ name: 'Balar', extensions: ['html'] }]},function (fileNames) {
+                                      if(fileNames !== undefined) {
+                                      
+                                      current_openfile = fileNames[0];
+                                      console.log(current_openfile);
+                                      var data = handler.loadFile(current_openfile);
+                                      editor.setValue(data);
+                                      }
+                                      });
             }
-          },
-        ]
-      },
-      {
-        label: 'Window',
-        role: 'window',
-        submenu: [
-          {
-            label: 'Minimize',
-            accelerator: 'CmdOrCtrl+M',
-            role: 'minimize'
-          },
-          {
-            label: 'Close',
-            accelerator: 'CmdOrCtrl+W',
-            role: 'close'
-          },
-        ]
-      }
-    ];
-
-    if (process.platform == 'darwin') {
-      var name = remote.require('app').getName();
-      template.unshift({
-        label: name,
-        submenu: [
-          {
-            label: 'About ' + name,
-            role: 'about'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Services',
-            role: 'services',
-            submenu: []
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Hide ' + name,
-            accelerator: 'Command+H',
-            role: 'hide'
-          },
-          {
-            label: 'Hide Others',
-            accelerator: 'Command+Shift+H',
-            role: 'hideothers'
-          },
-          {
-            label: 'Show All',
-            role: 'unhide'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Quit',
-            accelerator: 'Command+Q',
-            click: function() { remote.require('app').quit(); }
-          },
-        ]
-      });
-      // Window menu.
-      template[3].submenu.push(
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Bring All to Front',
-          role: 'front'
-        }
-      );
-    }
-
-
-    menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menu);
-    </script>
-    <!-- end electron -->
-    
-    <div id="editor"></div>
-    <div id="preview"></div>
-    <script>
-    editor = ace.edit("editor");
-    editor.setTheme("ace/theme/chrome");
-    editor.session.setMode("ace/mode/markdown");
-    editor.setShowPrintMargin(false);
-    editor.setOptions({
-      fontSize: "13pt"
-    });
-    editor.getSession().setUseWrapMode(true);
-    
-    
-    editor.on('input', function() {
-        updatePreview(editor.getValue());
-    })
         
+        function savefile() {
+            if (current_openfile == "") {
+                alert('please open the file first');
+                return;
+            }
+            
+            handler.savefile(current_openfile,editor.getValue());
+        }
+		
+		function showpreview(show) {
+			var display = "";
+			var width = "50%"
+			if (!show) {
+				display = 'none';
+				width = "100%";
+			}
+			document.getElementById("preview").style.display = display;
+			document.getElementById("editor").style.width = width;
+		}
+        var template = [
+                        {
+                        label: 'File',
+                        submenu: [
+                                  {
+                                  label: 'Open',
+                                  accelerator: 'CmdOrCtrl+O',
+                                  click: function() {
+                                  openfile();
+                                  }
+                                  },
+                                  {
+                                  label: 'Save',
+                                  accelerator: 'CmdOrCtrl+S',
+                                  click: function() {
+                                  savefile();
+                                  }
+                                  }
+                                  ]
+                        },
+                        {
+                        label: 'Edit',
+                        submenu: [
+                                  {
+                                  label: 'Undo',
+                                  accelerator: 'CmdOrCtrl+Z',
+                                  role: 'undo'
+                                  },
+                                  {
+                                  label: 'Redo',
+                                  accelerator: 'Shift+CmdOrCtrl+Z',
+                                  role: 'redo'
+                                  },
+                                  {
+                                  type: 'separator'
+                                  },
+                                  {
+                                  label: 'Cut',
+                                  accelerator: 'CmdOrCtrl+X',
+                                  role: 'cut'
+                                  },
+                                  {
+                                  label: 'Copy',
+                                  accelerator: 'CmdOrCtrl+C',
+                                  role: 'copy'
+                                  },
+                                  {
+                                  label: 'Paste',
+                                  accelerator: 'CmdOrCtrl+V',
+                                  role: 'paste'
+                                  },
+                                  {
+                                  label: 'Select All',
+                                  accelerator: 'CmdOrCtrl+A',
+                                  role: 'selectall'
+                                  },
+                                  ]
+                        },
+                        {
+                        label: 'View',
+                        submenu: [
+                                  {
+                                  label: 'Show Preview',
+                                  accelerator:  'Alt+H',
+                                  type: 'checkbox', checked: true,
+                                  click: function(item, focusedWindow) {
+                                  if (item.checked) {
+                                  showpreview(true);
+                                  }
+                                  else {
+                                  showpreview(false);
+                                  }
+                                  }
+                                  },
+                                  {
+                                  label: 'Reload',
+                                  accelerator: 'CmdOrCtrl+R',
+                                  click: function(item, focusedWindow) {
+                                  if (focusedWindow)
+                                  focusedWindow.reload();
+                                  }
+                                  },
+                                  {
+                                  label: 'Toggle Full Screen',
+                                  accelerator: (function() {
+                                                if (process.platform == 'darwin')
+                                                return 'Ctrl+Command+F';
+                                                else
+                                                return 'F11';
+                                                })(),
+                                  click: function(item, focusedWindow) {
+                                  if (focusedWindow)
+                                  focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+                                  }
+                                  },
+                                  {
+                                  label: 'Toggle Developer Tools',
+                                  accelerator: (function() {
+                                                if (process.platform == 'darwin')
+                                                return 'Alt+Command+I';
+                                                else
+                                                return 'Ctrl+Shift+I';
+                                                })(),
+                                  click: function(item, focusedWindow) {
+                                  if (focusedWindow)
+                                  focusedWindow.toggleDevTools();
+                                  }
+                                  }
+                                  ]
+                        },
+                        {
+                        label: 'Window',
+                        role: 'window',
+                        submenu: [
+                                  {
+                                  label: 'Minimize',
+                                  accelerator: 'CmdOrCtrl+M',
+                                  role: 'minimize'
+                                  },
+                                  {
+                                  label: 'Close',
+                                  accelerator: 'CmdOrCtrl+W',
+                                  role: 'close'
+                                  },
+                                  ]
+                        }
+                        ];
+                        
+                        if (process.platform == 'darwin') {
+                            var name = remote.require('app').getName();
+                            template.unshift({
+                                             label: name,
+                                             submenu: [
+                                                       {
+                                                       label: 'About ' + name,
+                                                       role: 'about'
+                                                       },
+                                                       {
+                                                       type: 'separator'
+                                                       },
+                                                       {
+                                                       label: 'Services',
+                                                       role: 'services',
+                                                       submenu: []
+                                                       },
+                                                       {
+                                                       type: 'separator'
+                                                       },
+                                                       {
+                                                       label: 'Hide ' + name,
+                                                       accelerator: 'Command+H',
+                                                       role: 'hide'
+                                                       },
+                                                       {
+                                                       label: 'Hide Others',
+                                                       accelerator: 'Command+Shift+H',
+                                                       role: 'hideothers'
+                                                       },
+                                                       {
+                                                       label: 'Show All',
+                                                       role: 'unhide'
+                                                       },
+                                                       {
+                                                       type: 'separator'
+                                                       },
+                                                       {
+                                                       label: 'Quit',
+                                                       accelerator: 'Command+Q',
+                                                       click: function() { remote.require('app').quit(); }
+                                                       },
+                                                       ]
+                                             });
+                                             // Window menu.
+                                             template[3].submenu.push(
+                                                                      {
+                                                                      type: 'separator'
+                                                                      },
+                                                                      {
+                                                                      label: 'Bring All to Front',
+                                                                      role: 'front'
+                                                                      }
+                                                                      );
+                        }
+        
+        
+        menu = Menu.buildFromTemplate(template);
+        Menu.setApplicationMenu(menu);
+            </script>
+        <!-- end electron -->
+        
+        <div id="editor"></div>
+        <div id="preview"></div>
+        <script>
+            editor = ace.edit("editor");
+            editor.setTheme("ace/theme/chrome");
+            editor.session.setMode("ace/mode/markdown");
+            editor.setShowPrintMargin(false);
+            editor.setOptions({
+                              fontSize: "13pt"
+                              });
+                              editor.getSession().setUseWrapMode(true);
+                              
+                              
+                              editor.on('input', function() {
+                                        updatePreview(editor.getValue());
+                                        })
+                                        
+                                        
+                                        marked.setOptions({
+											gfm: true,
+                                                          highlight: function(code){
+                                                          return hljs.highlightAuto(code).value;
+                                                          }
+                                                          });
+                                                          
+                                                          function updatePreview(val) {
+                                                              document.getElementById('preview').innerHTML = marked(val);
+                                                          }
+        
+        
+            </script>
+    </body>
     
-    marked.setOptions({
-         highlight: function(code){
-           return hljs.highlightAuto(code).value;
-         }
-       });
-       
-    function updatePreview(val) {
-        document.getElementById('preview').innerHTML = marked(val);
-    }
     
     
-    </script>
-</body>
-
-
-
 </html>
