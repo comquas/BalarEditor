@@ -1,0 +1,1 @@
+electron-packager ./ BalarEditor --platform=darwin --arch=all --version=1.4.1 --app-version=1.0.0 --overwrite
