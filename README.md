@@ -3,7 +3,7 @@ Markdown Editor for [Balar](https://github.com/saturngod/Balar) . Open Balar ind
 ## Using
 
 - Node.js
-- Ace Editor
+- CodeMirror Editor
 - Electorn
 - marked.js and highlight.js for preview
 
