@@ -12,7 +12,12 @@ Markdown Editor for [Balar](https://github.com/saturngod/Balar) . Open Balar ind
 It's require electron. Install electron like below
 
 ```
-npm install electron-prebuilt -g
+npm install electron -g
+
+cd your_balar_editor_path
+
+npm install
+
 ```
 
 After installing electron, run like

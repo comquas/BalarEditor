@@ -1,12 +1,14 @@
 <html>
     <head>
         <title>Balar App</title>
-        <script src="./js/ace/ace.js"></script>
-        <script src="./js/ace/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./js/ace/theme-chrome.js" type="text/javascript" charset="utf-8"></script>
+         <script src="./js/codemirror/lib/codemirror.js"></script>
+        <script src="./js/codemirror/mode/markdown/markdown.js"></script>
+        <script src="./js/codemirror/addon/mode/overlay.js"></script>
+        <script src="./js/codemirror/mode/gfm/gfm.js"></script>
         <script src="./js/marked.js"></script>
         <script src="./js/highlight/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
         <link rel="stylesheet" href="./js/highlight/styles/default.css" type="text/css">
+        <link rel="stylesheet" href="./js/codemirror/lib/codemirror.css" type="text/css">
             <style>
                 body {
                     margin:0px;
@@ -17,6 +19,7 @@
                 left:0px;
                 width: 100%;
                 height: 100%;
+                
             }
             #preview {
                 position:fixed;
@@ -30,6 +33,15 @@
                 overflow:scroll;
             }
             
+            .CodeMirror {
+                height: 100%;
+                padding-left:5px;
+                padding-right:5px;
+            }
+            .CodeMirror pre {
+                font-size: 17px;
+            }
+
                 </style>
             
     </head>
@@ -47,7 +59,7 @@
             var file = path.resolve(__dirname,"./modules/balarHandler.js");
             
             var handler = remote.require(file);
-            console.log(handler);
+            
             var current_openfile = "";
             
             var currentPreview = false;
@@ -57,9 +69,9 @@
                                       if(fileNames !== undefined) {
                                       
                                       current_openfile = fileNames[0];
-                                      console.log(current_openfile);
+                                      
                                       var data = handler.loadFile(current_openfile);
-                                      editor.setValue(data);
+                                      editor.getDoc().setValue(data);
                                       }
                                       });
             }
@@ -75,7 +87,7 @@
 		
 		function showpreview(show) {
             currentPreview = show;
-			var display = "";
+			var display = "block";
 			var width = "50%"
 			if (!show) {
 				display = 'none';
@@ -277,37 +289,31 @@
         <div id="editor"></div>
         <div id="preview"></div>
         <script>
-            editor = ace.edit("editor");
-            editor.setTheme("ace/theme/chrome");
-            editor.session.setMode("ace/mode/markdown");
-            editor.setShowPrintMargin(false);
-            editor.setOptions({
-                              fontSize: "13pt"
-                              });
-                              editor.getSession().setUseWrapMode(true);
-                              
-                              
-                              editor.on('input', function() {
-                                    if (currentPreview) {
-                                        updatePreview(editor.getValue());
-                                    }
-                                })
-                                
+            function updatePreview(val) {
+                document.getElementById('preview').innerHTML = marked(val);
+            }
 
+            editor = CodeMirror(document.getElementById("editor"),{
+                "mode" : "gfm",
+                "lineWrapping": true,
+                onChange: function (cm) {
+                    
+                }
+            });
 
-                                marked.setOptions({
-                                    gfm: true,
-                                    highlight: function(code){
-                                    return hljs.highlightAuto(code).value;
-                                    }
-                                    });
-                                                    
-                                function updatePreview(val) {
-                                document.getElementById('preview').innerHTML = marked(val);
-                                }
-        
-        
-            </script>
+            editor.on("changes",function(cm,newvalues) {
+                if (currentPreview) {
+                    updatePreview(cm.getValue());
+                }
+            });
+
+            marked.setOptions({
+                gfm: true,
+                highlight: function(code){
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+        </script>
     </body>
     
     
